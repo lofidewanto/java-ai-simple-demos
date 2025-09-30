@@ -5,6 +5,7 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.ai.chat.client.ChatClient;
+import org.springframework.ai.chat.client.advisor.SimpleLoggerAdvisor;
 import org.springframework.ai.chat.prompt.Prompt;
 import org.springframework.ai.chat.prompt.PromptTemplate;
 import org.springframework.stereotype.Service;
@@ -81,6 +82,7 @@ public class CustomerAgentService {
             String response = chatClient.prompt()
                     .system(systemPrompt)
                     .user(prompt.getContents())
+                    .advisors(new SimpleLoggerAdvisor())
                     .tools(customerRepository)
                     .call()
                     .content();
