@@ -1,0 +1,64 @@
+```mermaid
+graph TB
+    subgraph "Spring Boot Application"
+        APP[DemoAiApplication<br/>@SpringBootApplication]
+        
+        subgraph "Bean Configuration"
+            CC[ChatClient Bean<br/>Created from OllamaChatModel]
+        end
+        
+        subgraph "Service Layer"
+            CAS[CustomerAgentService<br/>@Service]
+        end
+        
+        subgraph "Repository Layer"
+            CR[CustomerRepository<br/>@Repository<br/>@Tool]
+        end
+        
+        subgraph "Data Models"
+            CUST[Customer<br/>Java Record<br/>Immutable]
+        end
+    end
+    
+    subgraph "External Systems"
+        OLLAMA[Ollama LLM<br/>localhost:11434<br/>Model: gpt-oss:20b]
+    end
+    
+    subgraph "Spring AI Framework"
+        SPRING_AI[Spring AI Core]
+        TOOL_DISCOVERY[Tool Discovery<br/>Scans @Tool annotations]
+        PROMPT[PromptTemplate<br/>Template Engine]
+        ADVISOR[SimpleLoggerAdvisor<br/>Logging Interceptor]
+    end
+    
+    APP -->|Creates & Configures| CC
+    APP -->|Component Scan| CAS
+    APP -->|Component Scan| CR
+    
+    CAS -->|Uses| CC
+    CAS -->|Creates| PROMPT
+    CAS -->|Passes as Tool| CR
+    
+    CC -->|Communicates with| OLLAMA
+    CC -->|Uses| SPRING_AI
+    CC -->|Applies| ADVISOR
+    
+    SPRING_AI -->|Discovers| TOOL_DISCOVERY
+    TOOL_DISCOVERY -->|Finds| CR
+    
+    CR -->|Returns| CUST
+    OLLAMA -->|Invokes via Spring AI| CR
+    
+    CAS -->|Receives| CUST
+    
+    style APP fill:#e1f5ff
+    style CC fill:#fff4e1
+    style CAS fill:#e8f5e9
+    style CR fill:#f3e5f5
+    style CUST fill:#fce4ec
+    style OLLAMA fill:#ffebee
+    style SPRING_AI fill:#e0f2f1
+    style TOOL_DISCOVERY fill:#e0f2f1
+    style PROMPT fill:#fff9c4
+    style ADVISOR fill:#f1f8e9
+```

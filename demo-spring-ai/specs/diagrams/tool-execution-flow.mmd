@@ -1,0 +1,75 @@
+```mermaid
+flowchart TD
+    START([Application Startup]) --> SCAN[Spring AI<br/>Component Scanning]
+    
+    SCAN --> FIND_REPO[Find @Repository<br/>Classes]
+    
+    FIND_REPO --> SCAN_METHODS[Scan Methods for<br/>@Tool Annotation]
+    
+    SCAN_METHODS --> CHECK{Found @Tool<br/>Methods?}
+    
+    CHECK -->|No| SKIP[Skip this class]
+    CHECK -->|Yes| EXTRACT[Extract Tool Metadata]
+    
+    EXTRACT --> META[Metadata Extraction:<br/>- Method name<br/>- Description<br/>- Parameters<br/>- Return type]
+    
+    META --> SCHEMA[Generate JSON Schema:<br/>- Function name<br/>- Description<br/>- Parameters schema<br/>- Required fields]
+    
+    SCHEMA --> REGISTER[Register Tool<br/>in Spring AI Registry]
+    
+    REGISTER --> READY[Tool Ready<br/>for LLM Invocation]
+    
+    READY --> RUNTIME([Runtime Execution])
+    
+    RUNTIME --> LLM_CALL[LLM Receives<br/>Tool Definitions]
+    
+    LLM_CALL --> LLM_DECIDE{LLM Decides<br/>to Call Tool?}
+    
+    LLM_DECIDE -->|No| DIRECT_RESP[Generate Response<br/>Without Tool]
+    LLM_DECIDE -->|Yes| TOOL_REQ[LLM Sends<br/>Tool Call Request]
+    
+    TOOL_REQ --> PARSE[Spring AI Parses:<br/>- Tool name<br/>- Arguments]
+    
+    PARSE --> MATCH[Match Tool Name<br/>to Registered Method]
+    
+    MATCH --> VALIDATE[Validate Arguments<br/>Against Schema]
+    
+    VALIDATE --> VALID{Valid?}
+    
+    VALID -->|No| ERROR[Return Error<br/>to LLM]
+    VALID -->|Yes| DESERIALIZE[Deserialize Arguments<br/>to Java Types]
+    
+    DESERIALIZE --> INVOKE[Invoke Java Method<br/>via Reflection]
+    
+    INVOKE --> EXAMPLE["Example:<br/>customerRepository<br/>.getCustomerById(customerId)"]
+    
+    EXAMPLE --> EXECUTE[Execute Method Logic]
+    
+    EXECUTE --> RETURN_VAL[Method Returns<br/>Customer Object]
+    
+    RETURN_VAL --> SER[Serialize Result<br/>to JSON]
+    
+    SER --> SEND_LLM[Send Tool Result<br/>to LLM]
+    
+    SEND_LLM --> LLM_PROCESS[LLM Processes<br/>Tool Result]
+    
+    LLM_PROCESS --> LLM_DECIDE
+    
+    DIRECT_RESP --> FINAL[Final Response]
+    ERROR --> FINAL
+    
+    FINAL --> END([End])
+    
+    style START fill:#e1f5ff
+    style SCAN fill:#fff4e1
+    style EXTRACT fill:#e8f5e9
+    style SCHEMA fill:#f3e5f5
+    style REGISTER fill:#c8e6c9
+    style LLM_DECIDE fill:#fff9c4
+    style INVOKE fill:#ffebee
+    style EXAMPLE fill:#fce4ec
+    style RETURN_VAL fill:#fce4ec
+    style ERROR fill:#ffcdd2
+    style FINAL fill:#c8e6c9
+    style END fill:#e1f5ff
+```

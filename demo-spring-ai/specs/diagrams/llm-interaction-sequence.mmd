@@ -1,0 +1,61 @@
+```mermaid
+sequenceDiagram
+    participant Client
+    participant CAS as CustomerAgentService
+    participant PT as PromptTemplate
+    participant CC as ChatClient
+    participant SA as Spring AI Framework
+    participant OLLAMA as Ollama LLM
+    participant CR as CustomerRepository
+    participant CUST as Customer Record
+
+    Client->>+CAS: generateCustomerResponse(customerId, inquiry)
+    
+    Note over CAS: Start timer<br/>Log: Starting LLM call
+    
+    CAS->>CAS: Build system prompt<br/>(agent personality, company info)
+    
+    CAS->>+PT: Create prompt template<br/>with variables
+    PT-->>-CAS: Prompt with {customerId}, {inquiry}
+    
+    Note over CAS: Log: System prompt<br/>Log: User prompt<br/>Log: Variables
+    
+    CAS->>+CC: chatClient.prompt()
+    CC->>CC: .system(systemPrompt)
+    CC->>CC: .user(promptContents)
+    CC->>CC: .advisors(SimpleLoggerAdvisor)
+    CC->>CC: .tools(customerRepository)
+    
+    CC->>+SA: Process request
+    
+    Note over SA: Discover @Tool methods<br/>from customerRepository
+    
+    SA->>+OLLAMA: Send prompt + tool definitions
+    
+    Note over OLLAMA: Analyze prompt<br/>Determine need for customer data
+    
+    OLLAMA-->>-SA: Request: getCustomerById(customerId)
+    
+    Note over SA: Tool invocation required
+    
+    SA->>+CR: getCustomerById(customerId)
+    CR->>+CUST: new Customer(...)
+    CUST-->>-CR: Customer instance
+    CR-->>-SA: Customer object
+    
+    SA->>SA: Serialize Customer to JSON
+    
+    SA->>+OLLAMA: Tool result: Customer JSON
+    
+    Note over OLLAMA: Generate response<br/>with customer context
+    
+    OLLAMA-->>-SA: Final response text
+    SA-->>-CC: Response content
+    CC-->>-CAS: String response
+    
+    Note over CAS: Stop timer<br/>Calculate duration<br/>Log: Response length<br/>Log: Duration
+    
+    CAS-->>-Client: Personalized response
+    
+    Note over Client: Response includes:<br/>- Customer name<br/>- Segment-specific info<br/>- Company details
+```

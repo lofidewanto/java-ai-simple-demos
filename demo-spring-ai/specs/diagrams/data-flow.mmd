@@ -1,0 +1,62 @@
+```mermaid
+flowchart TD
+    START([Client Calls Service]) --> INPUT[Input Data:<br/>- customerId: String<br/>- inquiry: String]
+    
+    INPUT --> SYS_PROMPT[Build System Prompt<br/>- Agent personality<br/>- Company info<br/>- Instructions]
+    
+    INPUT --> USER_PROMPT[Build User Prompt<br/>- Customer ID variable<br/>- Inquiry variable<br/>- Template formatting]
+    
+    SYS_PROMPT --> MERGE[Merge Prompts]
+    USER_PROMPT --> MERGE
+    
+    MERGE --> CHAT_CLIENT[ChatClient API<br/>Fluent builder pattern]
+    
+    CHAT_CLIENT --> CONFIG[Configure Request:<br/>- system()<br/>- user()<br/>- tools()<br/>- advisors()]
+    
+    CONFIG --> SPRING_AI[Spring AI Framework<br/>Process & Transform]
+    
+    SPRING_AI --> TOOL_SCAN[Scan @Tool Annotations<br/>Generate JSON Schema]
+    
+    TOOL_SCAN --> LLM_REQ[LLM Request Payload:<br/>- System message<br/>- User message<br/>- Tool definitions<br/>- Model params]
+    
+    LLM_REQ --> OLLAMA[Ollama LLM<br/>Model: gpt-oss:20b]
+    
+    OLLAMA --> DECISION{LLM Needs<br/>Tool Call?}
+    
+    DECISION -->|Yes| TOOL_CALL[Tool Call Request:<br/>getCustomerById]
+    DECISION -->|No| GENERATE[Generate Response]
+    
+    TOOL_CALL --> REPO[CustomerRepository<br/>@Tool method]
+    
+    REPO --> DB_MOCK[Mock Data<br/>or Database Query]
+    
+    DB_MOCK --> CUST_OBJ[Customer Record:<br/>- id<br/>- name<br/>- email<br/>- phone<br/>- language<br/>- segment<br/>- lastInteraction]
+    
+    CUST_OBJ --> SERIALIZE[Serialize to JSON]
+    
+    SERIALIZE --> LLM_CONTEXT[Send to LLM<br/>as tool result]
+    
+    LLM_CONTEXT --> GENERATE
+    
+    GENERATE --> LLM_RESP[LLM Response:<br/>Natural language text<br/>with customer context]
+    
+    LLM_RESP --> SPRING_AI_RESP[Spring AI<br/>Parse & Validate]
+    
+    SPRING_AI_RESP --> CHAT_RESP[ChatClient<br/>Extract content]
+    
+    CHAT_RESP --> SERVICE_LOG[Service Layer:<br/>- Log response<br/>- Calculate duration<br/>- Error handling]
+    
+    SERVICE_LOG --> RETURN[Return String<br/>to Client]
+    
+    RETURN --> END([End])
+    
+    style START fill:#e1f5ff
+    style INPUT fill:#fff4e1
+    style SYS_PROMPT fill:#e8f5e9
+    style USER_PROMPT fill:#e8f5e9
+    style OLLAMA fill:#ffebee
+    style CUST_OBJ fill:#fce4ec
+    style RETURN fill:#c8e6c9
+    style END fill:#e1f5ff
+    style DECISION fill:#fff9c4
+```
