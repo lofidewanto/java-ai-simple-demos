@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Guest Book</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link th:href="@{/css/style.css}" rel="stylesheet">
+</head>
+<body>
+    <nav class="navbar navbar-dark bg-primary mb-4">
+        <div class="container">
+            <a class="navbar-brand" href="/">Guest Book</a>
+            <div class="d-flex">
+                <a href="/swagger-ui.html" class="btn btn-outline-light btn-sm me-2" target="_blank">API Docs</a>
+                <a href="/h2-console" class="btn btn-outline-light btn-sm" target="_blank">H2 Console</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <!-- Success/Error Messages -->
+        <div th:if="${successMessage}" class="alert alert-success alert-dismissible fade show" role="alert">
+            <span th:text="${successMessage}"></span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+        <div th:if="${errorMessage}" class="alert alert-danger alert-dismissible fade show" role="alert">
+            <span th:text="${errorMessage}"></span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+
+        <!-- Header -->
+        <div class="row mb-4">
+            <div class="col">
+                <h1 class="display-4">Guest Book Entries</h1>
+                <p class="lead">Share your thoughts with us!</p>
+            </div>
+            <div class="col-auto">
+                <a href="/entries/new" class="btn btn-primary btn-lg">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-plus-circle" viewBox="0 0 16 16">
+                        <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
+                        <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z"/>
+                    </svg>
+                    Add Entry
+                </a>
+            </div>
+        </div>
+
+        <!-- Entries List -->
+        <div th:if="${entries.isEmpty()}" class="alert alert-info">
+            <p class="mb-0">No entries yet. Be the first to sign the guest book!</p>
+        </div>
+
+        <div class="row row-cols-1 row-cols-md-2 g-4">
+            <div th:each="entry : ${entries}" class="col">
+                <div class="card h-100 shadow-sm">
+                    <div class="card-body">
+                        <h5 class="card-title" th:text="${entry.name}">Name</h5>
+                        <h6 class="card-subtitle mb-2 text-muted" th:text="${entry.email}">Email</h6>
+                        <p class="card-text" th:text="${entry.message}">Message</p>
+                    </div>
+                    <div class="card-footer bg-transparent">
+                        <small class="text-muted" th:text="${#temporals.format(entry.createdAt, 'MMM dd, yyyy HH:mm')}">Date</small>
+                        <div class="btn-group float-end" role="group">
+                            <a th:href="@{/entries/{id}/edit(id=${entry.id})}" class="btn btn-sm btn-outline-primary">
+                                Edit
+                            </a>
+                            <form th:action="@{/entries/{id}/delete(id=${entry.id})}" method="post" style="display: inline;">
+                                <button type="submit" class="btn btn-sm btn-outline-danger" 
+                                        onclick="return confirm('Are you sure you want to delete this entry?');">
+                                    Delete
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer class="mt-5 py-3 bg-light">
+        <div class="container text-center">
+            <p class="text-muted mb-0">Guest Book Spring Boot Demo</p>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

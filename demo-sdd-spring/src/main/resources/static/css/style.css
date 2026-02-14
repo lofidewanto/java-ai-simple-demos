@@ -1,0 +1,68 @@
+/* Custom styles for Guest Book application */
+
+body {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.container {
+    flex: 1;
+}
+
+/* Card styling */
+.card {
+    transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15) !important;
+}
+
+.card-text {
+    white-space: pre-wrap;
+    word-wrap: break-word;
+}
+
+/* Footer styling */
+footer {
+    margin-top: auto;
+}
+
+/* Form styling */
+textarea {
+    resize: vertical;
+}
+
+/* Alert auto-dismiss animation */
+.alert {
+    animation: slideDown 0.3s ease-out;
+}
+
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Button group spacing */
+.btn-group .btn {
+    margin-left: -1px;
+}
+
+/* Navbar brand styling */
+.navbar-brand {
+    font-size: 1.5rem;
+    font-weight: 600;
+}
+
+/* Card footer button alignment */
+.card-footer .btn-group {
+    white-space: nowrap;
+}
