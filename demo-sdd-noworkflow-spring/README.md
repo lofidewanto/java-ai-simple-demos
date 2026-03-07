@@ -1,5 +1,10 @@
 # demo-sdd-noworkflow-spring
 
+![Java](https://img.shields.io/badge/Java-21-blue?logo=openjdk)
+![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.5.11-brightgreen?logo=springboot)
+![License](https://img.shields.io/badge/License-Apache%202.0-blue)
+![Build](https://img.shields.io/badge/Build-Maven-red?logo=apachemaven)
+
 > A Specification-Driven Development (SDD) demo implementing an order processing workflow as a Spring Boot web application — **without any external workflow engine**.
 
 ---
@@ -40,23 +45,24 @@ The application is a full-stack Spring Boot web app with:
 ## State Machine
 
 ```
-┌────────────┐   CHECK_INVENTORY    ┌─────────────────────┐
-│  SUBMITTED │ ─────────────────►  │ CHECKING_INVENTORY  │
-└────────────┘                      └──────────┬──────────┘
-                                                 │
-                            ┌─────────────────────┼─────────────────────┐
-                            │                     │                     │
-                   MARK_AVAILABLE          MARK_UNAVAILABLE            │
-                            ▼                     ▼                     ▼
-               ┌──────────────────┐   ┌─────────────────────┐         │
-               │ PAYMENT_COLLECTED│   │  CUSTOMER_NOTIFIED  │         │
-               └────────┬─────────┘   │      (terminal)     │         │
-                        │             └─────────────────────┘         │
-                        ▼                                                    │
-               ┌───────────────┐                                          │
-               │    SHIPPED    │──────────────────────────────────────────┘
-               │   (terminal)  │
-               └───────────────┘
+┌─────────────┐  CHECK_INVENTORY   ┌──────────────────────┐
+│  SUBMITTED  │ ─────────────────► │  CHECKING_INVENTORY  │
+└─────────────┘                    └──────────┬───────────┘
+                                              │
+                              ┌───────────────┴───────────────┐
+                         MARK_AVAILABLE               MARK_UNAVAILABLE
+                              │                               │
+                              ▼                               ▼
+                  ┌────────────────────┐         ┌─────────────────────┐
+                  │  PAYMENT_COLLECTED │         │  CUSTOMER_NOTIFIED  │
+                  └─────────┬──────────┘         │      (terminal)     │
+                            │ SHIP               └─────────────────────┘
+                            │
+                            ▼
+                    ┌──────────────┐
+                    │   SHIPPED    │
+                    │  (terminal)  │
+                    └──────────────┘
 ```
 
 - **5 states**: `SUBMITTED`, `CHECKING_INVENTORY`, `PAYMENT_COLLECTED`, `SHIPPED`, `CUSTOMER_NOTIFIED`
@@ -98,26 +104,26 @@ The application is a full-stack Spring Boot web app with:
 ## Architecture
 
 ```
-┌─────────────────────────────────────────────────────────┐
-│                    PRESENTATION LAYER                   │
-│  OrderWebController   ← Thymeleaf UI (browser)         │
-│  OrderApiController   ← REST API (JSON)                │
-└───────────────────────┬─────────────────────────────────┘
-                        │
-┌───────────────────────▼─────────────────────────────────┐
-│                     SERVICE LAYER                       │
-│  OrderService — contains the state machine switch       │
-└───────────────────────┬─────────────────────────────────┘
-                        │
-┌───────────────────────▼─────────────────────────────────┐
-│                  DATA ACCESS LAYER                      │
-│  OrderRepository (JpaRepository)                         │
-└───────────────────────┬─────────────────────────────────┘
-                        │
-┌───────────────────────▼─────────────────────────────────┐
-│                   DOMAIN LAYER                          │
-│  Order entity, OrderStatus enum, H2 + Flyway            │
-└─────────────────────────────────────────────────────────┘
+┌──────────────────────────────────────────────────────┐
+│                   PRESENTATION LAYER                 │
+│  OrderWebController  -  Thymeleaf UI (browser)       │
+│  OrderApiController  -  REST API (JSON)              │
+└──────────────────────────┬───────────────────────────┘
+                           │
+┌──────────────────────────▼───────────────────────────┐
+│                    SERVICE LAYER                     │
+│  OrderService  -  state machine switch + audit trail │
+└──────────────────────────┬───────────────────────────┘
+                           │
+┌──────────────────────────▼───────────────────────────┐
+│                  DATA ACCESS LAYER                   │
+│  OrderRepository  -  JpaRepository<Order, Long>      │
+└──────────────────────────┬───────────────────────────┘
+                           │
+┌──────────────────────────▼───────────────────────────┐
+│                    DOMAIN LAYER                      │
+│  Order entity, OrderStatus enum, H2 + Flyway         │
+└──────────────────────────────────────────────────────┘
 ```
 
 ---
