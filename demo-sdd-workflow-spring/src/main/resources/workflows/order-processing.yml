@@ -1,0 +1,40 @@
+name: order-processing
+description: "Bestellabwicklung -- Manages the full order lifecycle from placement to shipping or cancellation"
+source: "https://github.com/lofidewanto/java-ai-simple-demos/issues/7"
+
+states:
+  - name: NEW
+    initial: true
+    description: "Neue Bestellung eingegangen"
+  - name: CHECKING_AVAILABILITY
+    description: "Verfuegbarkeit des Artikels wird geprueft"
+  - name: PAYMENT_PENDING
+    description: "Zahlung des Kunden ausstehend"
+  - name: SHIPPED
+    terminal: true
+    description: "Bestellung wurde versendet"
+  - name: CANCELLED
+    terminal: true
+    description: "Bestellung wurde storniert"
+
+transitions:
+  - from: NEW
+    to: CHECKING_AVAILABILITY
+    action: SUBMIT_ORDER
+    taskType: HUMAN
+    description: "Kunde gibt Bestellung auf"
+  - from: CHECKING_AVAILABILITY
+    to: PAYMENT_PENDING
+    action: STOCK_AVAILABLE
+    taskType: GATEWAY
+    description: "Lagerbestand ist ausreichend -- weiter zur Zahlung"
+  - from: CHECKING_AVAILABILITY
+    to: CANCELLED
+    action: STOCK_UNAVAILABLE
+    taskType: GATEWAY
+    description: "Lagerbestand nicht ausreichend -- Bestellung storniert"
+  - from: PAYMENT_PENDING
+    to: SHIPPED
+    action: PAYMENT_COLLECTED
+    taskType: SERVICE
+    description: "Zahlung erfolgreich eingezogen -- Versand wird ausgeloest"

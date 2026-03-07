@@ -1,0 +1,55 @@
+name: support-ticket
+description: "Support-Ticket -- Manages the lifecycle of a customer support request"
+
+states:
+  - name: OPEN
+    initial: true
+    description: "Ticket offen -- wartet auf Bearbeitung"
+  - name: IN_PROGRESS
+    description: "Ticket wird bearbeitet"
+  - name: ESCALATED
+    description: "Ticket eskaliert an zweiten Support-Level"
+  - name: RESOLVED
+    description: "Problem geloest -- wartet auf Bestaetigung"
+  - name: CLOSED
+    terminal: true
+    description: "Ticket geschlossen"
+  - name: REOPENED
+    description: "Ticket wurde vom Kunden erneut geoeffnet"
+
+transitions:
+  - from: OPEN
+    to: IN_PROGRESS
+    action: ASSIGN
+    taskType: HUMAN
+    description: "Support-Mitarbeiter uebernimmt das Ticket"
+  - from: IN_PROGRESS
+    to: ESCALATED
+    action: ESCALATE
+    taskType: HUMAN
+    description: "Problem zu komplex -- wird eskaliert"
+  - from: ESCALATED
+    to: IN_PROGRESS
+    action: RETURN_TO_AGENT
+    taskType: HUMAN
+    description: "Eskalationsteam gibt Ticket zurueck"
+  - from: IN_PROGRESS
+    to: RESOLVED
+    action: RESOLVE
+    taskType: HUMAN
+    description: "Support-Mitarbeiter markiert Problem als geloest"
+  - from: RESOLVED
+    to: CLOSED
+    action: CONFIRM_RESOLUTION
+    taskType: EVENT
+    description: "Kunde bestaetigt Loesung -- Ticket wird geschlossen"
+  - from: RESOLVED
+    to: REOPENED
+    action: REOPEN
+    taskType: HUMAN
+    description: "Kunde ist nicht zufrieden -- Ticket erneut geoeffnet"
+  - from: REOPENED
+    to: IN_PROGRESS
+    action: REASSIGN
+    taskType: HUMAN
+    description: "Ticket wird erneut einem Mitarbeiter zugewiesen"

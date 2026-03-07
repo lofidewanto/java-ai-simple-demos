@@ -1,0 +1,58 @@
+name: employee-onboarding
+description: "Mitarbeiter-Onboarding -- Manages the onboarding process for new employees"
+
+states:
+  - name: APPLICATION_RECEIVED
+    initial: true
+    description: "Bewerbung eingegangen"
+  - name: DOCUMENTS_REQUESTED
+    description: "Unterlagen wurden angefordert"
+  - name: DOCUMENTS_RECEIVED
+    description: "Unterlagen sind eingegangen"
+  - name: BACKGROUND_CHECK
+    description: "Hintergrundpruefung laeuft"
+  - name: MANAGER_APPROVAL
+    description: "Wartet auf Genehmigung des Vorgesetzten"
+  - name: ONBOARDED
+    terminal: true
+    description: "Mitarbeiter erfolgreich eingestellt"
+  - name: WITHDRAWN
+    terminal: true
+    description: "Bewerbung zurueckgezogen"
+
+transitions:
+  - from: APPLICATION_RECEIVED
+    to: DOCUMENTS_REQUESTED
+    action: REQUEST_DOCUMENTS
+    taskType: HUMAN
+    description: "HR fordert fehlende Unterlagen an"
+  - from: DOCUMENTS_REQUESTED
+    to: DOCUMENTS_RECEIVED
+    action: SUBMIT_DOCUMENTS
+    taskType: HUMAN
+    description: "Kandidat reicht Unterlagen ein"
+  - from: DOCUMENTS_RECEIVED
+    to: BACKGROUND_CHECK
+    action: START_BACKGROUND_CHECK
+    taskType: SERVICE
+    description: "Automatisierte Hintergrundpruefung gestartet"
+  - from: BACKGROUND_CHECK
+    to: MANAGER_APPROVAL
+    action: BACKGROUND_CHECK_PASSED
+    taskType: GATEWAY
+    description: "Hintergrundpruefung bestanden"
+  - from: MANAGER_APPROVAL
+    to: ONBOARDED
+    action: APPROVE
+    taskType: HUMAN
+    description: "Vorgesetzter genehmigt Einstellung"
+  - from: MANAGER_APPROVAL
+    to: WITHDRAWN
+    action: REJECT
+    taskType: HUMAN
+    description: "Vorgesetzter lehnt Einstellung ab"
+  - from: DOCUMENTS_REQUESTED
+    to: WITHDRAWN
+    action: WITHDRAW
+    taskType: HUMAN
+    description: "Kandidat zieht Bewerbung zurueck"
