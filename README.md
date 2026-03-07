@@ -27,6 +27,19 @@ Simple Demos for Java Spring Boot with Spring AI and LangChain4j
   - H2 Database
 - **Purpose**: Demonstrates Spring Boot application with domain-driven design patterns and database management
 
+### 3. demo-sdd-workflow-spring
+- **Description**: Lightweight embedded workflow engine for Spring Boot
+- **Java Version**: 21
+- **Spring Boot Version**: 3.5.11
+- **Key Dependencies**:
+  - Spring Data JPA
+  - Spring Web
+  - Thymeleaf
+  - Flyway (Database Migrations)
+  - H2 Database
+  - SpringDoc OpenAPI / Swagger UI
+- **Purpose**: Demonstrates a YAML-driven state machine workflow engine with a REST API and browser-based UI, built entirely on standard Spring Boot components
+
 ## Getting Started
 
 Each project is a standalone Maven project. To build and run:
@@ -38,5 +51,5 @@ mvn spring-boot:run
 ```
 
 ## Prerequisites
-- Java 17+ (Java 21 recommended for demo-sdd-spring)
+- Java 21+ (Java 17 is sufficient for demo-spring-ai only)
 - Maven 3.6+
