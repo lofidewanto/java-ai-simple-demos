@@ -16,6 +16,15 @@ The application is a full-stack Spring Boot web app with:
 
 ---
 
+## GitHub Issues
+
+| Issue | Title | Description |
+|-------|-------|-------------|
+| [#7](https://github.com/lofidewanto/java-ai-simple-demos/issues/7) | Bestellabwicklung — Business Process Definition | Defines the order processing business process: the 5-state workflow (SUBMITTED → CHECKING_INVENTORY → PAYMENT_COLLECTED → SHIPPED / CUSTOMER_NOTIFIED), transition rules, and acceptance criteria that serve as the SDD specification baseline. |
+| [#10](https://github.com/lofidewanto/java-ai-simple-demos/issues/10) | Implement Order Processing Web App (no workflow engine) | Implementation task: build the full-stack Spring Boot application based on the spec from #7, with Thymeleaf UI, REST API, Flyway migrations, 32 automated tests, and E2E browser validation. |
+
+---
+
 ## Build Time & Cost
 
 | Phase | Duration | AI Used | Notes |
@@ -256,4 +265,4 @@ demo-sdd-noworkflow-spring/
 
 ## License
 
-MIT
+Apache License 2.0
