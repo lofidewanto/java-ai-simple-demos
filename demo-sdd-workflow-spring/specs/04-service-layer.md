@@ -9,7 +9,7 @@ There are two service classes:
 | Service | Responsibility |
 |---------|---------------|
 | `WorkflowDefinitionService` | Load, validate, persist, and query workflow definitions |
-| `WorkflowInstanceService` | Start instances, execute state machine transitions, query instances and history |
+| `WorkflowInstanceService` | Start instances, execute state machine transitions, pause/resume instances, query instances and history |
 
 ---
 
@@ -101,20 +101,21 @@ States and transitions are stored in the database as JSON strings (TEXT columns)
 ```
 1. Load instance by ID (throws InstanceNotFoundException if absent)
 2. If instance.status == COMPLETED → throw WorkflowCompletedException
-3. Deserialise transitions from the associated definition
-4. Find a transition where from == instance.currentState AND action == action
+3. If instance.status == PAUSED → throw WorkflowPausedException
+4. Deserialise transitions from the associated definition
+5. Find a transition where from == instance.currentState AND action == action
    → if none found, throw InvalidTransitionException
-5. Update the instance:
+6. Update the instance:
      currentState = transition.to
      updatedAt    = now
-6. Write a WorkflowHistoryEntry:
+7. Write a WorkflowHistoryEntry:
      fromState  = previous currentState
      toState    = transition.to
      action     = action
      taskType   = transition.taskType (default HUMAN)
-7. If the new currentState is terminal:
+8. If the new currentState is terminal:
      instance.status = COMPLETED
-8. Persist and return WorkflowInstanceResponse
+9. Persist and return WorkflowInstanceResponse
 ```
 
 #### `findById(Long id) → WorkflowInstanceResponse`
@@ -130,6 +131,26 @@ Throws: InstanceNotFoundException if no instance with the given ID exists
 Return all instances.
 If workflowName is non-null, filter to only instances of that definition.
 Each response includes the full history.
+```
+
+#### `pauseInstance(Long instanceId) → WorkflowInstanceResponse`
+
+```
+1. Load instance by ID (throws InstanceNotFoundException if absent)
+2. If instance.status != RUNNING → throw WorkflowNotRunningException
+3. Set instance.status = PAUSED
+4. Set instance.updatedAt = now
+5. Persist and return WorkflowInstanceResponse
+```
+
+#### `resumeInstance(Long instanceId) → WorkflowInstanceResponse`
+
+```
+1. Load instance by ID (throws InstanceNotFoundException if absent)
+2. If instance.status != PAUSED → throw WorkflowNotPausedException
+3. Set instance.status = RUNNING
+4. Set instance.updatedAt = now
+5. Persist and return WorkflowInstanceResponse
 ```
 
 ---
@@ -161,6 +182,8 @@ After applying a transition, the service checks whether the new `currentState` i
 | `loadFromDto` | `@Transactional` — writes definition |
 | `startInstance` | `@Transactional` — writes instance + first history entry atomically |
 | `triggerTransition` | `@Transactional` — updates instance + writes history entry atomically |
+| `pauseInstance` | `@Transactional` — updates instance status |
+| `resumeInstance` | `@Transactional` — updates instance status |
 | `findById` / `findAll` | `@Transactional(readOnly = true)` |
 | `findByName` / `findAll` (definition) | `@Transactional(readOnly = true)` |
 

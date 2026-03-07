@@ -6,7 +6,9 @@
 http://localhost:8080
 ```
 
-All endpoints accept and return `application/json`. Interactive documentation is available at `http://localhost:8080/swagger-ui.html`.
+All REST endpoints accept and return `application/json`. Interactive REST documentation is available at `http://localhost:8080/swagger-ui.html`.
+
+The browser-based web UI is served from `http://localhost:8080/ui` — see [09 — UI Layer](09-ui-layer.md) for full UI route documentation.
 
 ---
 
@@ -210,6 +212,46 @@ Retrieve only the history entries for an instance (without the full instance obj
 
 ---
 
+### POST /api/workflow-instances/{id}/pause
+
+Pause a running workflow instance. Transitions are rejected while the instance is paused.
+
+**Path parameter:** `id` — numeric instance ID
+
+**Response 200 OK** — updated `WorkflowInstanceResponse` with `status = "PAUSED"`.
+
+**Response 422 Unprocessable Entity** — if instance is not currently `RUNNING`:
+
+```json
+{
+  "error": "WORKFLOW_NOT_RUNNING",
+  "message": "Workflow instance 1 is not in RUNNING state",
+  "timestamp": "2026-03-07T10:02:00"
+}
+```
+
+---
+
+### POST /api/workflow-instances/{id}/resume
+
+Resume a paused workflow instance, returning it to `RUNNING` status.
+
+**Path parameter:** `id` — numeric instance ID
+
+**Response 200 OK** — updated `WorkflowInstanceResponse` with `status = "RUNNING"`.
+
+**Response 422 Unprocessable Entity** — if instance is not currently `PAUSED`:
+
+```json
+{
+  "error": "WORKFLOW_NOT_PAUSED",
+  "message": "Workflow instance 1 is not in PAUSED state",
+  "timestamp": "2026-03-07T10:02:00"
+}
+```
+
+---
+
 ## Error Response Format
 
 All error responses follow a consistent structure:
@@ -230,6 +272,9 @@ All error responses follow a consistent structure:
 | Workflow instance not found | 404 | `INSTANCE_NOT_FOUND` |
 | Invalid action for current state | 422 | `INVALID_TRANSITION` |
 | Instance is in terminal state | 422 | `WORKFLOW_COMPLETED` |
+| Instance is not RUNNING (for pause) | 422 | `WORKFLOW_NOT_RUNNING` |
+| Instance is not PAUSED (for resume) | 422 | `WORKFLOW_NOT_PAUSED` |
+| Transition attempted on paused instance | 422 | `WORKFLOW_PAUSED` |
 | Request body validation failure | 400 | `VALIDATION_ERROR` |
 
 ---
@@ -243,7 +288,7 @@ All error responses follow a consistent structure:
 | `id` | Long | Instance ID |
 | `workflowName` | String | Definition name |
 | `currentState` | String | Current state name |
-| `status` | String | `RUNNING` or `COMPLETED` |
+| `status` | String | `RUNNING`, `PAUSED`, or `COMPLETED` |
 | `createdAt` | LocalDateTime | ISO-8601 |
 | `updatedAt` | LocalDateTime | ISO-8601 |
 | `history` | List | See HistoryEntryResponse below |

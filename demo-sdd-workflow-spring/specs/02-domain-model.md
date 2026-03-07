@@ -51,7 +51,7 @@ Represents a single execution of a workflow definition. Created via `POST /api/w
 | `id` | `id` | `BIGINT` | PK, auto-generated |
 | `workflowDefinition` | `workflow_definition_id` | `BIGINT` | NOT NULL, FK → `workflow_definitions.id` |
 | `currentState` | `current_state` | `VARCHAR(255)` | NOT NULL |
-| `status` | `status` | `VARCHAR(50)` | NOT NULL, `RUNNING` or `COMPLETED` |
+| `status` | `status` | `VARCHAR(50)` | NOT NULL, `RUNNING`, `PAUSED`, or `COMPLETED` |
 | `createdAt` | `created_at` | `TIMESTAMP` | NOT NULL, set on insert |
 | `updatedAt` | `updated_at` | `TIMESTAMP` | NOT NULL, updated on each transition |
 
@@ -60,6 +60,8 @@ Represents a single execution of a workflow definition. Created via `POST /api/w
 2. Each successful transition updates `currentState` and `updatedAt`
 3. When `currentState` becomes a terminal state, `status` is set to `COMPLETED`
 4. `COMPLETED` instances are immutable — no further transitions are accepted
+5. A `RUNNING` instance can be set to `PAUSED` via the pause endpoint; transitions are rejected while paused
+6. A `PAUSED` instance can be set back to `RUNNING` via the resume endpoint
 
 ---
 
@@ -126,7 +128,8 @@ public enum TaskType {
 │ PK id                            │
 │ FK workflow_definition_id        │
 │    currentState                  │
-│    status  (RUNNING|COMPLETED)   │
+│    status  (RUNNING|PAUSED|      │
+│             COMPLETED)           │
 │    createdAt                     │
 │    updatedAt                     │
 └──────────────┬───────────────────┘
@@ -154,5 +157,6 @@ public enum TaskType {
 | States/transitions stored as JSON blobs | Avoids extra join tables; definitions are read-only so no normalisation benefit |
 | `TaskType` on transition, not state | A state can be reached via different task types (e.g. manual or automated) |
 | Append-only history | Provides a complete audit trail; no history entry is ever modified |
-| `status` field on instance | Avoids repeatedly querying history to determine whether an instance is terminal |
+| `status` field on instance | Avoids repeatedly querying history to determine whether an instance is terminal or paused |
+| Three-value status (`RUNNING`, `PAUSED`, `COMPLETED`) | `PAUSED` allows long-running workflows to be suspended without losing state; `COMPLETED` is irreversible |
 | H2 in-memory database | Simplifies local development; swap `application.properties` for PostgreSQL/MySQL in production |

@@ -2,9 +2,9 @@
 
 ## Purpose
 
-`demo-sdd-workflow-spring` is a **REST API-only backend workflow engine** built with Spring Boot 3.5.11 and Java 21. It allows developers to define multi-step business processes as YAML DSL files and execute them via HTTP. There is no web UI; all interaction is through JSON REST endpoints documented via Swagger UI.
+`demo-sdd-workflow-spring` is a **Spring Boot workflow engine** with a REST API backend and a lightweight browser-based UI. It allows developers to define multi-step business processes as YAML DSL files and execute them via HTTP or through the web interface. Interaction is possible through both a Thymeleaf/Bootstrap UI (at `/ui`) and the JSON REST endpoints documented via Swagger UI.
 
-The project demonstrates how a lightweight, embedded workflow engine can be built on standard Spring Boot components — JPA, Flyway, and Jackson — without any external workflow runtime.
+The project demonstrates how a lightweight, embedded workflow engine can be built on standard Spring Boot components — JPA, Flyway, Jackson, and Thymeleaf — without any external workflow runtime.
 
 ---
 
@@ -18,7 +18,7 @@ The project demonstrates how a lightweight, embedded workflow engine can be buil
 | Persist instance state and full history | Yes |
 | Query definitions and instances via REST | Yes |
 | Reject invalid/illegal transitions | Yes |
-| Web UI / Thymeleaf views | No |
+| Web UI / Thymeleaf views | Yes — served at `/ui` (Bootstrap 5, vanilla JS) |
 | External message queues (Kafka, RabbitMQ) | No |
 | Multi-tenant isolation | No |
 | Authentication / Authorization | No |
@@ -39,7 +39,7 @@ Definitions are read-only after startup; they cannot be modified via REST.
 
 A workflow instance is a running (or completed) execution of a definition. It tracks:
 - The **current state** of the process
-- Its **status**: `RUNNING` or `COMPLETED`
+- Its **status**: `RUNNING`, `PAUSED`, or `COMPLETED`
 - A full **history** of every state change
 
 ### TaskType
@@ -65,33 +65,43 @@ The engine implements a simple deterministic state machine:
 ## System Components
 
 ```
-┌──────────────────────────────────────────────────────┐
-│                  Spring Boot Application              │
-│                                                      │
-│  ┌─────────────────┐     ┌──────────────────────┐   │
-│  │ WorkflowDef     │     │ WorkflowInstance      │   │
-│  │ ApiController   │     │ ApiController         │   │
-│  └────────┬────────┘     └──────────┬───────────┘   │
-│           │                         │                │
-│  ┌────────▼────────┐     ┌──────────▼───────────┐   │
-│  │ WorkflowDef     │     │ WorkflowInstance      │   │
-│  │ Service         │     │ Service               │   │
-│  └────────┬────────┘     └──────────┬───────────┘   │
-│           │                         │                │
-│  ┌────────▼─────────────────────────▼───────────┐   │
-│  │            Spring Data JPA Repositories       │   │
-│  └────────────────────────┬──────────────────────┘   │
-│                           │                          │
-│  ┌────────────────────────▼──────────────────────┐   │
-│  │              H2 In-Memory Database             │   │
-│  │         (schema managed by Flyway)             │   │
-│  └───────────────────────────────────────────────┘   │
-│                                                      │
-│  ┌───────────────────────────────────────────────┐   │
-│  │  WorkflowDefinitionLoader (CommandLineRunner)  │   │
-│  │  Reads classpath:workflows/*.yml at startup    │   │
-│  └───────────────────────────────────────────────┘   │
-└──────────────────────────────────────────────────────┘
+┌──────────────────────────────────────────────────────────────┐
+│                   Spring Boot Application                     │
+│                                                              │
+│  ┌──────────────────┐                                        │
+│  │ WorkflowUi       │  (Thymeleaf @Controller)               │
+│  │ Controller       │  serves /ui/* pages                    │
+│  └────────┬─────────┘                                        │
+│           │ renders HTML shells (JS fetches /api/*)          │
+│           ▼                                                  │
+│  ┌────────────────────────────────────────────────────────┐  │
+│  │       Thymeleaf Templates + Bootstrap 5 + JS fetch     │  │
+│  └────────────────────────────────────────────────────────┘  │
+│                                                              │
+│  ┌─────────────────┐     ┌──────────────────────┐           │
+│  │ WorkflowDef     │     │ WorkflowInstance      │           │
+│  │ ApiController   │     │ ApiController         │           │
+│  └────────┬────────┘     └──────────┬───────────┘           │
+│           │                         │                        │
+│  ┌────────▼────────┐     ┌──────────▼───────────┐           │
+│  │ WorkflowDef     │     │ WorkflowInstance      │           │
+│  │ Service         │     │ Service               │           │
+│  └────────┬────────┘     └──────────┬───────────┘           │
+│           │                         │                        │
+│  ┌────────▼─────────────────────────▼───────────┐           │
+│  │            Spring Data JPA Repositories       │           │
+│  └────────────────────────┬──────────────────────┘           │
+│                           │                                  │
+│  ┌────────────────────────▼──────────────────────┐           │
+│  │              H2 In-Memory Database             │           │
+│  │         (schema managed by Flyway)             │           │
+│  └───────────────────────────────────────────────┘           │
+│                                                              │
+│  ┌───────────────────────────────────────────────┐           │
+│  │  WorkflowDefinitionLoader (CommandLineRunner)  │           │
+│  │  Reads classpath:workflows/*.yml at startup    │           │
+│  └───────────────────────────────────────────────┘           │
+└──────────────────────────────────────────────────────────────┘
 ```
 
 ---
@@ -112,8 +122,12 @@ Three example YAML workflows are included under `src/main/resources/workflows/`:
 
 | URL | Description |
 |-----|-------------|
-| `http://localhost:8080/api/workflow-definitions` | List all definitions |
-| `http://localhost:8080/api/workflow-instances` | List/create instances |
+| `http://localhost:8080/ui` | Workflow Engine web UI (redirects to `/ui/workflows`) |
+| `http://localhost:8080/ui/workflows` | List workflow definitions, start new instances |
+| `http://localhost:8080/ui/instances` | List all workflow instances with status |
+| `http://localhost:8080/ui/instances/{id}` | Instance detail: history, state, action buttons |
+| `http://localhost:8080/api/workflow-definitions` | REST — list all definitions |
+| `http://localhost:8080/api/workflow-instances` | REST — list/create instances |
 | `http://localhost:8080/swagger-ui.html` | Swagger UI (OpenAPI docs) |
 | `http://localhost:8080/h2-console` | H2 database console |
 
@@ -121,6 +135,8 @@ Three example YAML workflows are included under `src/main/resources/workflows/`:
 
 ## Source & References
 
-- GitHub issue (user story): https://github.com/lofidewanto/java-ai-simple-demos/issues/8
+- GitHub issue — backend engine (US-008): https://github.com/lofidewanto/java-ai-simple-demos/issues/8
+- GitHub issue — UI (US-009): https://github.com/lofidewanto/java-ai-simple-demos/issues/9
 - Reference workflow (Bestellabwicklung): https://github.com/lofidewanto/java-ai-simple-demos/issues/7
-- Implementation plan: `userstories/US-008-backend-workflow-engine.md`
+- Backend implementation plan: `userstories/US-008-backend-workflow-engine.md`
+- UI implementation plan: `userstories/US-009-workflow-ui.md`

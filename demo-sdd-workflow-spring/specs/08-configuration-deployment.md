@@ -64,7 +64,7 @@ Full dependency list:
 |------------|---------|
 | `spring-boot-starter-web` | REST controllers, embedded Tomcat |
 | `spring-boot-starter-data-jpa` | JPA / Hibernate |
-| `spring-boot-starter-thymeleaf` | Present in pom.xml — unused, safe to leave |
+| `spring-boot-starter-thymeleaf` | Thymeleaf template engine — serves the browser UI at `/ui` |
 | `flyway-core` | Database migrations |
 | `h2` | In-memory database (runtime/test scope) |
 | `jackson-dataformat-yaml` | Parse YAML workflow definition files |
@@ -94,6 +94,7 @@ The application will:
 1. Run Flyway migrations (creates 3 tables)
 2. Start `WorkflowDefinitionLoader` — loads 3 YAML files from `classpath:workflows/`
 3. Start listening on `http://localhost:8080`
+4. Serve the web UI at `http://localhost:8080/ui`
 
 ---
 
@@ -101,12 +102,18 @@ The application will:
 
 | URL | Description |
 |-----|-------------|
-| `http://localhost:8080/api/workflow-definitions` | List all loaded definitions |
-| `http://localhost:8080/api/workflow-definitions/{name}` | Get definition by name |
-| `http://localhost:8080/api/workflow-instances` | List / create instances |
-| `http://localhost:8080/api/workflow-instances/{id}` | Get instance with history |
-| `http://localhost:8080/api/workflow-instances/{id}/transitions` | Trigger a transition |
-| `http://localhost:8080/api/workflow-instances/{id}/history` | Get history only |
+| `http://localhost:8080/ui` | Web UI — redirects to workflow definitions page |
+| `http://localhost:8080/ui/workflows` | Web UI — list definitions, start instances |
+| `http://localhost:8080/ui/instances` | Web UI — list all workflow instances |
+| `http://localhost:8080/ui/instances/{id}` | Web UI — instance detail, history, action buttons |
+| `http://localhost:8080/api/workflow-definitions` | REST — list all loaded definitions |
+| `http://localhost:8080/api/workflow-definitions/{name}` | REST — get definition by name |
+| `http://localhost:8080/api/workflow-instances` | REST — list / create instances |
+| `http://localhost:8080/api/workflow-instances/{id}` | REST — get instance with history |
+| `http://localhost:8080/api/workflow-instances/{id}/transitions` | REST — trigger a transition |
+| `http://localhost:8080/api/workflow-instances/{id}/pause` | REST — pause a running instance |
+| `http://localhost:8080/api/workflow-instances/{id}/resume` | REST — resume a paused instance |
+| `http://localhost:8080/api/workflow-instances/{id}/history` | REST — get history only |
 | `http://localhost:8080/swagger-ui.html` | Swagger UI |
 | `http://localhost:8080/api-docs` | Raw OpenAPI JSON spec |
 | `http://localhost:8080/h2-console` | H2 database console |

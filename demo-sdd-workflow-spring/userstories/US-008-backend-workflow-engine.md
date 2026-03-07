@@ -571,3 +571,87 @@ CREATE TABLE workflow_history_entries (
 | AC-11 | T-24, T-26, T-28, T-31 |
 | AC-12 | T-25, T-26, T-28, T-31 |
 | AC-13 | T-25, T-26, T-28, T-31 |
+
+---
+
+## Test Results
+
+**Date:** 2026-03-07  
+**Build:** `./mvnw clean package` — **BUILD SUCCESS** (52 tests total, 0 failures, 0 errors)
+
+### WorkflowDefinitionLoaderTest
+
+| ID | Description | Result |
+|----|-------------|--------|
+| TC-01 | Valid YAML is parsed into correct states and transitions | PASSED |
+| TC-02 | Missing `initial` state throws validation error | PASSED |
+| TC-03 | Missing `terminal` state throws validation error | PASSED |
+| TC-04 | Unknown `from` reference throws validation error | PASSED |
+| TC-05 | Duplicate `(from, action)` pair throws validation error | PASSED |
+| TC-06 | `taskType` defaults to `HUMAN` when omitted | PASSED |
+
+### WorkflowDefinitionServiceTest
+
+| ID | Description | Result |
+|----|-------------|--------|
+| TC-07 | `findAll()` returns all persisted definitions | PASSED |
+| TC-08 | `findByName()` returns correct definition | PASSED |
+| TC-09 | `findByName()` throws `WorkflowNotFoundException` for unknown name | PASSED |
+
+### WorkflowInstanceServiceTest
+
+| ID | Description | Result |
+|----|-------------|--------|
+| TC-10 | `startInstance()` creates instance in initial state | PASSED |
+| TC-11 | `startInstance()` writes initial history entry with action `START` | PASSED |
+| TC-12 | `triggerTransition()` moves instance to correct next state | PASSED |
+| TC-13 | `triggerTransition()` writes history entry with correct taskType | PASSED |
+| TC-14 | `triggerTransition()` on terminal instance throws `WorkflowCompletedException` | PASSED |
+| TC-15 | `triggerTransition()` with unknown action throws `InvalidTransitionException` | PASSED |
+| TC-16 | `triggerTransition()` with valid action in wrong state throws `InvalidTransitionException` | PASSED |
+| TC-17 | Instance reaches terminal state → status set to `COMPLETED` | PASSED |
+| TC-18 | `findById()` throws `InstanceNotFoundException` for unknown ID | PASSED |
+| TC-19 | `pauseInstance()` sets status to `PAUSED` for running instance | PASSED |
+| TC-20 | `pauseInstance()` throws `WorkflowNotRunningException` for non-running instance | PASSED |
+| TC-21 | `resumeInstance()` sets status to `RUNNING` for paused instance | PASSED |
+| TC-22 | `resumeInstance()` throws `WorkflowPausedException` for non-paused instance | PASSED |
+| TC-23 | `triggerTransition()` on paused instance throws `WorkflowPausedException` | PASSED |
+
+### WorkflowDefinitionApiControllerTest
+
+| ID | Description | Result |
+|----|-------------|--------|
+| TC-24 | `GET /api/workflow-definitions` returns 200 with list | PASSED |
+| TC-25 | `GET /api/workflow-definitions/{name}` returns 200 for known name | PASSED |
+| TC-26 | `GET /api/workflow-definitions/{name}` returns 404 for unknown name | PASSED |
+
+### WorkflowInstanceApiControllerTest
+
+| ID | Description | Result |
+|----|-------------|--------|
+| TC-27 | `POST /api/workflow-instances` returns 201 with new instance | PASSED |
+| TC-28 | `POST /api/workflow-instances` with unknown workflowName returns 404 | PASSED |
+| TC-29 | `GET /api/workflow-instances/{id}` returns 200 with history | PASSED |
+| TC-30 | `GET /api/workflow-instances/{id}` returns 404 for unknown ID | PASSED |
+| TC-31 | `POST /api/workflow-instances/{id}/transitions` returns 200 on valid action | PASSED |
+| TC-32 | `POST /api/workflow-instances/{id}/transitions` returns 422 on invalid action | PASSED |
+| TC-33 | `POST /api/workflow-instances/{id}/transitions` returns 422 on completed instance | PASSED |
+| TC-34 | `POST /api/workflow-instances/{id}/transitions` returns 422 on paused instance | PASSED |
+| TC-35 | `POST /api/workflow-instances/{id}/pause` returns 200 on running instance | PASSED |
+| TC-36 | `POST /api/workflow-instances/{id}/pause` returns 422 on non-running instance | PASSED |
+| TC-37 | `POST /api/workflow-instances/{id}/resume` returns 200 on paused instance | PASSED |
+| TC-38 | `POST /api/workflow-instances/{id}/resume` returns 422 on non-paused instance | PASSED |
+| TC-39 | `GET /api/workflow-instances?workflowName=X` filters correctly | PASSED |
+
+### WorkflowEngineIntegrationTest
+
+| ID | Description | Result |
+|----|-------------|--------|
+| TC-40 | Full order-processing lifecycle: start → SUBMIT_ORDER → STOCK_AVAILABLE → PAYMENT_COLLECTED → COMPLETED | PASSED |
+| TC-41 | Cancellation path: start → SUBMIT_ORDER → STOCK_UNAVAILABLE → COMPLETED | PASSED |
+| TC-42 | Cannot trigger transition after reaching terminal state | PASSED |
+| TC-43 | History entries are correct after full lifecycle | PASSED |
+| TC-44 | Three example workflows are loaded at startup | PASSED |
+| TC-45 | Swagger UI is accessible at `/swagger-ui.html` | PASSED |
+| TC-46 | H2 console is accessible at `/h2-console` | PASSED |
+| TC-47 | Pause and resume lifecycle: start → pause → resume → continue transitions | PASSED |
