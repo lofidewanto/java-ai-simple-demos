@@ -5,6 +5,17 @@
 ![License](https://img.shields.io/badge/License-Apache%202.0-blue)
 ![Build](https://img.shields.io/badge/Build-Maven-red?logo=apachemaven)
 
+## Development Timeline
+
+| Phase | Duration | Description |
+|-------|----------|-------------|
+| Planning & Specs | ~1h 30m | Writing user story, fine-tuning, detailed tasks and technical specs, Spring Boot init, plan reviewed with Claude Sonnet, Claude Opus, and Gemini 3.1 Pro Preview |
+| Backend Implementation | ~23m | Workflow Engine REST backend (US-008) — Claude Sonnet |
+| UI Spec & Implementation | ~1h 40m | UI specification and implementation (US-009) — Claude Sonnet |
+| **Total** | **~3h 33m** | End-to-end from planning to working UI |
+
+**Total token cost: ~3 EUR**
+
 A lightweight, embedded workflow engine built on standard Spring Boot components. Define multi-step business processes as YAML files and execute them via REST API or a browser-based UI — no external workflow runtime required.
 
 ## Features
