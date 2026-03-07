@@ -1,0 +1,110 @@
+/* -- Card shadows --------------------------------------------------------- */
+.card {
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+/* -- Navbar brand --------------------------------------------------------- */
+.navbar-brand {
+    font-size: 1.25rem;
+    letter-spacing: 0.02em;
+}
+
+/* -- Audit trail pre block ------------------------------------------------ */
+.audit-trail {
+    font-family: ui-monospace, "SFMono-Regular", Consolas, monospace;
+    font-size: 0.85rem;
+    line-height: 1.6;
+    background: #f8f9fa;
+    color: #495057;
+    white-space: pre-wrap;
+    word-break: break-word;
+}
+
+/* -- Workflow stepper ------------------------------------------------------ */
+.order-stepper {
+    display: flex;
+    align-items: center;
+    gap: 0;
+    overflow-x: auto;
+    padding-bottom: 0.5rem;
+}
+
+.order-stepper .step {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    flex: 1;
+    position: relative;
+    padding: 0.5rem 0.25rem;
+}
+
+.order-stepper .step::before {
+    content: '';
+    width: 2rem;
+    height: 2rem;
+    border-radius: 50%;
+    background: #dee2e6;
+    border: 3px solid #adb5bd;
+    display: block;
+    margin-bottom: 0.4rem;
+    z-index: 1;
+}
+
+.order-stepper .step.active::before {
+    background: #0d6efd;
+    border-color: #0d6efd;
+}
+
+.order-stepper .step.skipped::before {
+    background: #6c757d;
+    border-color: #6c757d;
+}
+
+/* Connecting line between steps */
+.order-stepper .step + .step::after {
+    content: '';
+    position: absolute;
+    top: 1.5rem;
+    right: 50%;
+    width: 100%;
+    height: 3px;
+    background: #dee2e6;
+    z-index: 0;
+}
+
+.order-stepper .step-label {
+    font-size: 0.7rem;
+    text-align: center;
+    color: #6c757d;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    word-break: break-word;
+    max-width: 5rem;
+}
+
+.order-stepper .step.active .step-label {
+    color: #0d6efd;
+    font-weight: 600;
+}
+
+/* -- Table improvements --------------------------------------------------- */
+.table th {
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+/* -- Badge sizing in table ------------------------------------------------ */
+.table .badge {
+    font-size: 0.75rem;
+}
+
+/* -- Responsive body padding ---------------------------------------------- */
+body {
+    font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    background-color: #f5f6fa;
+}
+
+main.container {
+    min-height: calc(100vh - 140px);
+}

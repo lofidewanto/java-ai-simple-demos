@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>New Order - Order Manager</title>
+    <link rel="stylesheet"
+          href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet"
+          href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" />
+    <link rel="stylesheet" th:href="@{/css/style.css}" />
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top">
+        <div class="container">
+            <a class="navbar-brand fw-bold" th:href="@{/orders}">
+                <i class="bi bi-box-seam me-2"></i>Order Manager
+            </a>
+            <div class="navbar-nav ms-auto">
+                <a class="nav-link" th:href="@{/orders}">
+                    <i class="bi bi-list-ul me-1"></i>Orders
+                </a>
+                <a class="nav-link" th:href="@{/orders/new}">
+                    <i class="bi bi-plus-circle me-1"></i>New Order
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <main class="container py-4">
+
+        <div class="row justify-content-center">
+            <div class="col-md-6">
+                <div class="card shadow-sm">
+                    <div class="card-header bg-primary text-white">
+                        <h5 class="mb-0"><i class="bi bi-plus-circle me-2"></i>New Order</h5>
+                    </div>
+                    <div class="card-body">
+                        <form th:action="@{/orders}" th:object="${order}" method="post">
+                            <div class="mb-3">
+                                <label for="customerName" class="form-label fw-semibold">
+                                    Customer Name <span class="text-danger">*</span>
+                                </label>
+                                <input type="text" class="form-control" id="customerName"
+                                       th:field="*{customerName}" required placeholder="Full name" />
+                            </div>
+                            <div class="mb-3">
+                                <label for="productName" class="form-label fw-semibold">
+                                    Product Name <span class="text-danger">*</span>
+                                </label>
+                                <input type="text" class="form-control" id="productName"
+                                       th:field="*{productName}" required placeholder="Product name" />
+                            </div>
+                            <div class="mb-4">
+                                <label for="quantity" class="form-label fw-semibold">
+                                    Quantity <span class="text-danger">*</span>
+                                </label>
+                                <input type="number" class="form-control" id="quantity"
+                                       th:field="*{quantity}" required min="1" value="1" />
+                            </div>
+                            <div class="d-flex gap-2">
+                                <button type="submit" class="btn btn-success">
+                                    <i class="bi bi-send me-1"></i>Submit Order
+                                </button>
+                                <a th:href="@{/orders}" class="btn btn-outline-secondary">
+                                    <i class="bi bi-x-circle me-1"></i>Cancel
+                                </a>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="border-top py-3 mt-auto bg-light">
+        <div class="container text-center text-muted small">
+            Order Manager &mdash; demo-sdd-noworkflow-spring
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

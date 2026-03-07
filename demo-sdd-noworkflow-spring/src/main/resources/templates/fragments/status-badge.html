@@ -1,0 +1,10 @@
+<th:block th:fragment="badge(status)">
+    <span th:switch="${status.name()}"
+          class="badge rounded-pill fs-6">
+        <span th:case="'SUBMITTED'"          class="badge rounded-pill bg-secondary">Submitted</span>
+        <span th:case="'CHECKING_INVENTORY'" class="badge rounded-pill bg-info text-dark">Checking Inventory</span>
+        <span th:case="'PAYMENT_COLLECTED'"  class="badge rounded-pill bg-primary">Payment Collected</span>
+        <span th:case="'SHIPPED'"            class="badge rounded-pill bg-success">Shipped</span>
+        <span th:case="'CUSTOMER_NOTIFIED'"  class="badge rounded-pill bg-warning text-dark">Customer Notified</span>
+    </span>
+</th:block>
