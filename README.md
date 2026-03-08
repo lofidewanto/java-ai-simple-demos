@@ -40,6 +40,19 @@ Simple Demos for Java Spring Boot with Spring AI and LangChain4j
   - SpringDoc OpenAPI / Swagger UI
 - **Purpose**: Demonstrates a YAML-driven state machine workflow engine with a REST API and browser-based UI, built entirely on standard Spring Boot components
 
+### 4. demo-sdd-noworkflow-spring
+- **Description**: Specification-Driven Development (SDD) demo implementing an order processing workflow without an external workflow engine
+- **Java Version**: 21
+- **Spring Boot Version**: 3.5.11
+- **Key Dependencies**:
+  - Spring Data JPA
+  - Spring Web
+  - Thymeleaf
+  - Flyway (Database Migrations)
+  - H2 Database
+  - SpringDoc OpenAPI / Swagger UI
+- **Purpose**: Demonstrates how a business process state machine can be implemented with a plain service class (no Camunda, Flowable, or other workflow engine), following Specification-Driven Development principles
+
 ## Getting Started
 
 Each project is a standalone Maven project. To build and run:
