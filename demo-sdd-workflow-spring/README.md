@@ -9,6 +9,8 @@
 
 A lightweight, embedded workflow engine built on standard Spring Boot components. Define multi-step business processes as YAML files and execute them via REST API or a browser-based UI — no external workflow runtime required.
 
+Read the related article on [LinkedIn](https://www.linkedin.com/posts/dr-lofi-dewanto_bpmn-camunda-operaton-activity-7433977062941569025-kCfA?utm_source=share&utm_medium=member_desktop&rcm=ACoAAAKIpTEB5AlY7Z178vDErGeQaOBarUiE8YQ).
+
 ## Development Timeline
 
 | Phase | Duration | Description |
