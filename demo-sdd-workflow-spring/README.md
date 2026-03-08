@@ -11,6 +11,14 @@ A lightweight, embedded workflow engine built on standard Spring Boot components
 
 Read the related article on [LinkedIn](https://www.linkedin.com/posts/dr-lofi-dewanto_bpmn-camunda-operaton-activity-7433977062941569025-kCfA?utm_source=share&utm_medium=member_desktop&rcm=ACoAAAKIpTEB5AlY7Z178vDErGeQaOBarUiE8YQ).
 
+## GitHub Issues
+
+| Issue | Title | Description |
+|-------|-------|-------------|
+| [#7](https://github.com/lofidewanto/java-ai-simple-demos/issues/7) | Prozess: Bestellabwicklung | Reference order processing workflow designed with Gemini 3.1 Pro — used as the primary YAML DSL example and bundled as `order-processing.yml` |
+| [#8](https://github.com/lofidewanto/java-ai-simple-demos/issues/8) | Backend Workflow Engine | User story for the REST backend — state machine, YAML definitions, JPA persistence, pause/resume, full transition history |
+| [#9](https://github.com/lofidewanto/java-ai-simple-demos/issues/9) | UI for the Workflow Engine | User story for the Thymeleaf/Bootstrap web UI — list definitions, start instances, view history, trigger transitions from the browser |
+
 ## Development Timeline
 
 | Phase | Duration | Description |
@@ -244,14 +252,6 @@ demo-sdd-workflow-spring/
 |----------|-------------|
 | [US-008 — Backend Workflow Engine](userstories/US-008-backend-workflow-engine.md) | Implementation plan and test results for the REST backend |
 | [US-009 — Workflow UI](userstories/US-009-workflow-ui.md) | Implementation plan and test results for the web UI |
-
-## GitHub Issues
-
-| Issue | Title | Description |
-|-------|-------|-------------|
-| [#7](https://github.com/lofidewanto/java-ai-simple-demos/issues/7) | Prozess: Bestellabwicklung | Reference order processing workflow designed with Gemini 3.1 Pro — used as the primary YAML DSL example and bundled as `order-processing.yml` |
-| [#8](https://github.com/lofidewanto/java-ai-simple-demos/issues/8) | Backend Workflow Engine | User story for the REST backend — state machine, YAML definitions, JPA persistence, pause/resume, full transition history |
-| [#9](https://github.com/lofidewanto/java-ai-simple-demos/issues/9) | UI for the Workflow Engine | User story for the Thymeleaf/Bootstrap web UI — list definitions, start instances, view history, trigger transitions from the browser |
 
 ## License
 
