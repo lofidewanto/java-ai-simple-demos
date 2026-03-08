@@ -11,6 +11,16 @@
 
 ## Overview
 
+> **Goodbye BPMN and Camunda?**
+>
+> Do we still need BPMN tools and runtime environments like Camunda, Operaton, jBPMN & Co. in the age of AI agents?
+>
+> The idea: define your process simply as text, let an AI agent refine it into a structured process description, and then implement it as a clean Spring Boot application — with clear logging at all relevant points for monitoring and traceability — staying completely independent of large process frameworks.
+>
+> **SDD (Spec-Driven Development)** with AI is the key concept here. The process is described in a GitHub Issue ([#7](https://github.com/lofidewanto/java-ai-simple-demos/issues/7)), used as the specification baseline, and the implementation is generated from it. No tool lock-in, no large upfront investments, fewer dependencies.
+>
+> See the original discussion: [Dr. Lofi Dewanto on LinkedIn](https://www.linkedin.com/posts/dr-lofi-dewanto_bpmn-camunda-operaton-activity-7433977062941569025-kCfA)
+
 This project demonstrates how a well-defined business process can be implemented using a simple `switch` statement in a service class, rather than a heavyweight workflow engine (Camunda, Flowable, etc.). It follows the **Bestellabwicklung (Order Processing)** workflow from GitHub Issue [#7](https://github.com/lofidewanto/java-ai-simple-demos/issues/7) and was built according to Issue [#10](https://github.com/lofidewanto/java-ai-simple-demos/issues/10).
 
 The application is a full-stack Spring Boot web app with:
