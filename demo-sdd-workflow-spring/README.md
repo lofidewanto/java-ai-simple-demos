@@ -14,7 +14,7 @@
 | UI Spec & Implementation | ~1h 40m | UI specification and implementation (US-009) — Claude Sonnet |
 | **Total** | **~3h 33m** | End-to-end from planning to working UI |
 
-**Total token cost: ~3 EUR**
+**Total token cost: ~3 USD**
 
 A lightweight, embedded workflow engine built on standard Spring Boot components. Define multi-step business processes as YAML files and execute them via REST API or a browser-based UI — no external workflow runtime required.
 
